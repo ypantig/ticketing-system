@@ -1,0 +1,19 @@
+{
+  "name": "yp-ticketing-system",
+  "type": "wordpress-plugin",
+  "description": "Ticketing System for Atira Property Management Strata Sites",
+  "homepage": "https://atira.ca",
+  "authors": [
+    {
+      "name": "Ynah Pantig",
+      "email": "me@ynahpantig.com",
+      "homepage": "https://ynahpantig.com"
+    }
+  ],
+  "keywords": ["wordpress-plugin"],
+  "autoload": {
+    "psr-4": {
+      "YP\\": "app/"
+    }
+  }
+}

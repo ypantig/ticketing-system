@@ -1,0 +1,19 @@
+{
+  "entry": {
+    "main": [
+      "./scripts/main.js",
+      "./styles/main.scss"
+    ],
+    "admin": [
+      "./styles/admin.scss"
+    ]
+  },
+  "publicPath": "/wp-content/plugins/yp-ticketing-system",
+  "devUrl": "https://template.atirapm.test",
+  "proxyUrl": "https://localhost:3000",
+  "cacheBusting": "[name]_[hash:8]",
+  "watch": [
+    "app/**/*.php",
+    "views/**/*.php"
+  ]
+}

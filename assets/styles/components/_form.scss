@@ -1,0 +1,22 @@
+.disabled-field {
+  position: relative;
+
+  .banned {
+    position: absolute;
+    right: $spacer;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.form-field {
+  margin-bottom: $spacer;
+
+  label {
+    width: 100%;
+  }
+}
+
+.yp_ticket-template-default input[type="submit"] {
+  width: auto;
+}

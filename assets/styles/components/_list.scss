@@ -1,0 +1,17 @@
+.list__item {
+  border-bottom: 1px solid rgba($light-grey, 0.4);
+  margin-bottom: $grid-gutter-width / 2;
+  padding-bottom: $grid-gutter-width / 2;
+}
+
+.list__search {
+  position: relative;
+
+  i {
+    position: absolute;
+    padding: $spacer;
+    right: 0;
+    top: 0;
+    height: 100%;
+  }
+}

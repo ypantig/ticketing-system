@@ -1,0 +1,14 @@
+.yp-tickets__box {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  grid-row-gap: 10px;
+  grid-column-gap: 20px;
+}
+
+.yp-tickets__field {
+  display: contents;
+}
+
+.yp-tickets__label {
+  font-weight: bold;
+}
