@@ -42,6 +42,11 @@ class Comments {
 
   public function comment_form_logged_in__modifyCommentForm( $postID ) {
 
+    $userID = get_current_user_id();
+    if ( !user_can( $userID, 'remove_users' ) ) {
+      return;
+    }
+
     $markup = '';
     $currentStatus = get_the_terms( $postID, 'ticket_status' )[0];
 

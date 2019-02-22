@@ -76,7 +76,6 @@ class PostsControllerTickets extends \WP_REST_Posts_Controller {
 
     $query = new \WP_Query( $args );
     $posts = $query->posts;
-    $key = 0;
 
     $data = [
       'no_results' => __( 'No results to show' ),
@@ -97,11 +96,9 @@ class PostsControllerTickets extends \WP_REST_Posts_Controller {
       $post->custom = (object) [
         'excerpt' => wpautop( wp_trim_excerpt( $post->post_content ) ),
       ];
-      $post->key = $key;
+      $post->permalink = get_permalink( $post );
 
       $data[ 'results' ][] = $this->prepare_response_for_collection( $query->post );
-
-      $key++;
 
     endwhile; wp_reset_postdata(); endif;
 

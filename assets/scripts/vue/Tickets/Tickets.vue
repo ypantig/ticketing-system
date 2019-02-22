@@ -26,7 +26,7 @@
 
     <div class="row" v-else>
       <div class="col-12" v-for="post in posts">
-        <div class="d-flex list__item no-gutters">
+        <a :href="post.permalink" class="d-flex list__item no-gutters">
           <div class="col-12 col-md-8">
             <span class="h4 d-block" v-html="post.post_title"></span>
             <span class="text-grey-opacity" v-html="post.custom.excerpt"></span>
@@ -36,19 +36,8 @@
             <div v-for="term in post.terms">
               <strong><span v-html="term.taxonomy.labels.singular_name"></span>:</strong> <span v-html="term.name"></span>
             </div>
-            <!-- <div v-if="post.terms.ticket_priority">
-              <strong>Priority:</strong> <span v-html="post.terms.ticket_priority.name"></span>
-            </div>
-
-            <div v-if="post.terms.ticket_status">
-              <strong>Status:</strong> <span v-html="post.terms.ticket_status.name"></span>
-            </div>
-
-            <div v-if="post.terms.ticket_service">
-              <strong><span v-html=":</strong> <span v-html="post.terms.ticket_service.name"></span>
-            </div> -->
           </div>
-        </div>
+        </a>
       </div><!-- .col-12 -->
 
       <div class="col-12" v-if="noResults">{{ noResults }}</div><!-- .col-12 -->
