@@ -99,13 +99,11 @@ export default {
             success: () => {
               // console.log( data );
 
-              $form.find( '.js-yp-ticket-form-inner' ).slideUp( () => {
-                $form.find( '.js-yp-ticket-success' ).slideDown();
+              $form.find( '.js-yp-ticket-form-inner' ).slideUp();
+              $form.find( '.js-yp-ticket-success' ).slideDown();
 
-                $( 'body' ).animate({
-                  scrollTop: 0,
-                });
-
+              $( 'html, body' ).animate({
+                scrollTop: 0,
               });
             },
           });

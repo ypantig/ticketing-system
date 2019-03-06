@@ -9,10 +9,6 @@ class Theme {
     add_action( 'wp_enqueue_scripts', [ &$this, 'wp_enqueue_scripts__addStyles' ] );
     add_action( 'wp_enqueue_scripts', [ &$this, 'wp_enqueue_scripts__addScripts' ], 100 );
 
-    // add_filter( 'body_class', [ &$this, 'body_class__addBodyClass' ] );
-
-    // add_filter( 'single_template', [ &$this, 'single_template__loadCustomSingle' ] );
-
   }
 
   public function body_class__addBodyClass( $classes ) {

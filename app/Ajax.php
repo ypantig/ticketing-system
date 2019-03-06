@@ -50,57 +50,6 @@ class Ajax {
 
     $postID = wp_insert_post( $post );
 
-    /* import
-    you get the following information for each file:
-    $_FILES['field_name']['name']
-    $_FILES['field_name']['size']
-    $_FILES['field_name']['type']
-    $_FILES['field_name']['tmp_name']
-    */
-
-    // if($_FILES['attachment']['name']) {
-
-    //   /**
-    //    * HANDLE FILE UPLOAD
-    //    */
-    //   //provides access to WP environment
-    //   require_once( $_SERVER[ 'DOCUMENT_ROOT' ] . '/wp-load.php' );
-
-    //   if(!$_FILES['attachment']['error']) {
-
-    //     //validate the file
-    //     $new_file_name = strtolower($_FILES['attachment']['tmp_name']);
-
-    //     //can't be larger than 300 KB
-    //     if($_FILES['attachment']['size'] > (300000)) {
-    //       //wp_die generates a visually appealing message element
-    //       wp_die('Your file size is to large.');
-    //     }
-    //     else {
-    //       //the file has passed the test
-    //       //These files need to be included as dependencies when on the front end.
-    //       require_once( ABSPATH . 'wp-admin/includes/image.php' );
-    //       require_once( ABSPATH . 'wp-admin/includes/file.php' );
-    //       require_once( ABSPATH . 'wp-admin/includes/media.php' );
-
-    //       // Let WordPress handle the upload.
-    //       // Remember, 'upload' is the name of our file input in our form above.
-    //       $fileID = media_handle_upload( 'attachment', $postID );
-
-    //       if ( is_wp_error( $fileID ) ) {
-    //         $error = 'There was something wrong in uploading the file.';
-    //       } else {
-    //         update_post_meta( $postID, 'yp_comment_attachment', $fileID );
-    //         // wp_die('Your menu was successfully imported.');
-    //       }
-    //     }
-    //   }
-    //   else {
-    //     //set that to be the returned message
-    //     $error = 'There was something wrong in uploading the file: ' . $_FILES['attachment']['error'];
-    //   }
-    // }
-
     wp_set_object_terms( $postID, [ $request[ 'ticket_status' ] ], 'ticket_status' );
     wp_set_object_terms( $postID, [ $request[ 'ticket_priority' ] ], 'ticket_priority' );
     wp_set_object_terms( $postID, [ $request[ 'ticket_service' ] ], 'ticket_service' );
