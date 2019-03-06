@@ -1,6 +1,6 @@
 <template>
   <div id="tickets" class="width-full">
-    <div class="row align-items-center mb-3 mb-md-5 mt-3" animate-left>
+    <div class="row align-items-center mb-3 mb-md-5 mt-3">
       <div class="col-12 col-md-4" v-for="tax in filters">
         <div class="select-field form-group mb-3 mb-md-0">
           <select :name="tax.slug" v-model="tax.current" @change="filter" :data-select="tax.slug">

@@ -17,6 +17,29 @@
   }
 }
 
-.yp_ticket-template-default input[type="submit"] {
+.yp-tickets__form input[type="submit"] {
   width: auto;
+
+  &[disabled] {
+    cursor: default;
+    opacity: 0.5;
+  }
+}
+
+.yp-ticket-upload-error,
+.yp-ticket__message {
+  display: none;
+}
+
+.yp-ticket-upload-field {
+  display: flex;
+}
+
+.yp-ticket-upload-filename {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 50%;
+  align-self: center;
+  padding-left: 15px;
+  overflow: hidden;
 }

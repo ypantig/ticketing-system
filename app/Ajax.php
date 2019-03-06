@@ -37,60 +37,86 @@ class Ajax {
       die();
     }
 
-    // $post = [
-    //   'post_title' => $request[ 'post_title' ],
-    //   'post_content' => $request[ 'post_content' ],
-    //   'post_author' => $request[ 'post_author' ],
-    //   'post_type' => 'yp_ticket',
-    //   'post_status' => 'publish',
-    // ];
+    /**
+     * HANDLE CREATING THE POST/TICKET
+     */
+    $post = [
+      'post_title' => $request[ 'post_title' ],
+      'post_content' => $request[ 'post_content' ],
+      'post_author' => $request[ 'post_author' ],
+      'post_type' => 'yp_ticket',
+      'post_status' => 'publish',
+    ];
 
-    // $postID = wp_insert_post( $post );
+    $postID = wp_insert_post( $post );
 
-    // wp_set_object_terms( $postID, [ $request[ 'ticket_status' ] ], 'ticket_status' );
-    // wp_set_object_terms( $postID, [ $request[ 'ticket_priority' ] ], 'ticket_priority' );
-    // wp_set_object_terms( $postID, [ $request[ 'ticket_service' ] ], 'ticket_service' );
-    // wp_set_object_terms( $postID, [ 'open' ], 'ticket_status' );
+    /* import
+    you get the following information for each file:
+    $_FILES['field_name']['name']
+    $_FILES['field_name']['size']
+    $_FILES['field_name']['type']
+    $_FILES['field_name']['tmp_name']
+    */
 
-    // $uploadOverrides = [
-    //   'test_form' => false
-    // ];
+    // if($_FILES['attachment']['name']) {
 
-    // if( !function_exists( 'wp_handle_upload' ) ){
-    //   require_once( ABSPATH . 'wp-admin/includes/file.php' );
-    // }
+    //   /**
+    //    * HANDLE FILE UPLOAD
+    //    */
+    //   //provides access to WP environment
+    //   require_once( $_SERVER[ 'DOCUMENT_ROOT' ] . '/wp-load.php' );
 
-    // $fileReturn = wp_handle_upload( $request[ 'attachment' ], $uploadOverrides );
+    //   if(!$_FILES['attachment']['error']) {
 
-    // if( !isset( $fileReturn[ 'error' ] ) && !isset( $fileReturn[ 'upload_error_handler' ] ) ) {
-    //   $filename = $fileReturn['file'];
+    //     //validate the file
+    //     $new_file_name = strtolower($_FILES['attachment']['tmp_name']);
 
-    //   $attachment = array(
-    //     'post_mime_type' => $fileReturn['type'],
-    //     'post_title' => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
-    //     'post_content' => '',
-    //     'post_status' => 'inherit',
-    //     'guid' => $fileReturn['url']
-    //   );
+    //     //can't be larger than 300 KB
+    //     if($_FILES['attachment']['size'] > (300000)) {
+    //       //wp_die generates a visually appealing message element
+    //       wp_die('Your file size is to large.');
+    //     }
+    //     else {
+    //       //the file has passed the test
+    //       //These files need to be included as dependencies when on the front end.
+    //       require_once( ABSPATH . 'wp-admin/includes/image.php' );
+    //       require_once( ABSPATH . 'wp-admin/includes/file.php' );
+    //       require_once( ABSPATH . 'wp-admin/includes/media.php' );
 
-    //   $attachmentID = wp_insert_attachment( $attachment, $fileReturn['url'] );
+    //       // Let WordPress handle the upload.
+    //       // Remember, 'upload' is the name of our file input in our form above.
+    //       $fileID = media_handle_upload( 'attachment', $postID );
 
-    //   require_once(ABSPATH . 'wp-admin/includes/image.php');
-    //   $attachmentData = wp_generate_attachment_metadata( $attachmentID, $filename );
-    //   wp_update_attachment_metadata( $attachmentID, $attachmentData );
-
-    //   if ( 0 < intval( $attachmentID ) ) {
-    //     update_post_meta( $postID, 'yp_comment_attachment', $attachment );
-    //     // wp_insert_attachment( $attachment, $fileReturn[ 'url' ], $postID );
+    //       if ( is_wp_error( $fileID ) ) {
+    //         $error = 'There was something wrong in uploading the file.';
+    //       } else {
+    //         update_post_meta( $postID, 'yp_comment_attachment', $fileID );
+    //         // wp_die('Your menu was successfully imported.');
+    //       }
+    //     }
+    //   }
+    //   else {
+    //     //set that to be the returned message
+    //     $error = 'There was something wrong in uploading the file: ' . $_FILES['attachment']['error'];
     //   }
     // }
+
+    wp_set_object_terms( $postID, [ $request[ 'ticket_status' ] ], 'ticket_status' );
+    wp_set_object_terms( $postID, [ $request[ 'ticket_priority' ] ], 'ticket_priority' );
+    wp_set_object_terms( $postID, [ $request[ 'ticket_service' ] ], 'ticket_service' );
+    wp_set_object_terms( $postID, [ 'open' ], 'ticket_status' );
+
+    $error = '';
+    $attachment = $_POST[ 'attachment' ];
+    update_post_meta( $postID, 'yp_ticket_attachment', $attachment[ 'id' ] );
+    // $attachment = \YP\FileUpload::uploadFile( $_FILES, 'attachment', $postID, true );
 
     $data = [
       'post' => $post,
       'postID' => $postID,
       'request' => $request,
-      // 'attachment' => $attachmentID,
-      // 'file' => $fileReturn,
+      'error' => $error,
+      'attachment' => $attachment,
     ];
 
     echo json_encode( $data );

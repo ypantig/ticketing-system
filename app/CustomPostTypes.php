@@ -27,6 +27,7 @@ class CustomPostTypes {
           'title',
           'comments',
           'editor',
+          'author',
         ],
       ],
     ],

@@ -50,17 +50,6 @@ class YPTicketingSystem {
 
   }
 
-  /**
-   * Returns the saved options data as an array
-   *
-   * @author Ynah Pantig <me@ynahpantig.com>
-   */
-  public function getData() {
-
-    return get_option( $this->options, [] );
-
-  }
-
 }
 
 function loadTicketSystem() {
