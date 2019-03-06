@@ -7,38 +7,33 @@ class Comments {
   public function __construct() {
 
     // unset fields that are not needed
-    add_filter( 'comment_form_field_url', '__return_false' );
-    add_filter( 'comment_form_field_email', '__return_false' );
-    add_filter( 'comment_form_field_website', '__return_false' );
-    add_filter( 'comment_form_field_author', '__return_false' );
+    // add_filter( 'comment_form_field_url', '__return_false' );
+    // // add_filter( 'comment_form_field_email', '__return_false' );
+    // add_filter( 'comment_form_field_website', '__return_false' );
+    // add_filter( 'comment_form_field_author', '__return_false' );
 
     add_filter( 'comment_form_defaults', [ &$this, 'comment_form_defaults__updateDefaultFields' ] );
 
     add_filter( 'comments_template', [ &$this, 'comments_template__updateCommentTemplate' ] );
 
-    add_action( 'comment_form_logged_in', [ &$this, 'comment_form_logged_in__modifyCommentForm' ] );
+    // add_action( 'comment_form_logged_in', [ &$this, 'comment_form_logged_in__modifyCommentForm' ] );
 
-    // add_action( 'add_meta_boxes_comment', [ &$this, 'add_meta_boxes_comment__addMetaBoxForComments' ] );
+    add_action( 'comment_post', [ &$this, 'comment_post__changeStatusIfNeeded' ], 10, 2 );
 
   }
 
-  // public function add_meta_boxes_comment__addMetaBoxForComments() {
+  public function comment_post__changeStatusIfNeeded( $commentID, $comment ) {
 
-  //   add_meta_box( 'yp-ticket-comment-meta', __( 'Comment Information', 'yp-ticketing-system' ), [ &$this, 'callback__commentMetaBox' ], 'comment', 'normal', 'high' );
+    $postID = $_POST[ 'comment_post_ID' ];
+    $currentStatus = get_the_terms( $postID, 'ticket_status' )[0]->slug;
 
-  // }
+    $formStatus = $_POST[ 'ticket_status' ];
 
-  // public function callback__commentMetaBox() {
+    if ( $currentStatus != $formStatus ) {
+      wp_set_object_terms( $postID, [ $_POST[ 'ticket_status' ] ], 'ticket_status' );
+    }
 
-  //   $file = get_comment_meta( $comment->comment_ID, 'yp_comment_attachment', true );
-  //   wp_nonce_field( 'yp-ticket-comment-update', 'yp-ticket-comment-update',false );
-
-  //   echo '<p>
-  //           <label for="yp_ticket_file">' . _e( 'Uploaded file', 'yp-ticketing-system' ) . '</label>
-  //           <input type="file" name="yp_ticket_file" value="' . $file . '" class="widefat" />
-  //       </p>';
-
-  // }
+  }
 
   public function comment_form_logged_in__modifyCommentForm( $postID ) {
 
@@ -66,8 +61,8 @@ class Comments {
       'label_submit' => __( 'Submit', 'yp-ticketing-system' ),
       'class_submit' => 'btn btn--primary',
       'title_reply_before' => '<h3 id="reply-title" class="h4 comment-reply-title">',
-      'comment_field' => '<p class="comment-form-comment"><label for="comment">' . _x( 'Notes', 'noun' ) . '</label> <textarea id="comment" name="comment" cols="45" rows="4" maxlength="65525" required="required"></textarea></p>',
-      'logged_in_as' => ''
+      'comment_field' => '<div class="row">' . $this->buildStatusField( $currentStatus ) . '</div><div class="comment-form-comment"><label for="comment">' . _x( 'Notes', 'noun' ) . '</label><textarea id="comment" name="comment" cols="45" rows="4" maxlength="65525" required="required"></textarea></div>',
+      'logged_in_as' => '',
     ];
 
     $defaults = array_merge( $defaults, $newDefaults );

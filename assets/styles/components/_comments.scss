@@ -39,3 +39,22 @@
     margin-bottom: $grid-gutter-width / 2;
   }
 }
+
+.comment-form-attachment label {
+  margin-bottom: -10px;
+  display: block;
+}
+
+.comment-form {
+  .form-submit {
+    margin-top: 20px;
+
+    input {
+      width: auto;
+    }
+  }
+}
+
+.ticketing-closed {
+  margin-top: 30px;
+}

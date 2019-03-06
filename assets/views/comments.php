@@ -31,5 +31,17 @@
     </div>
   <?php endif; ?>
 
-  <?php comment_form(); ?>
+  <?php
+
+    $ticketStatus = get_the_terms( $post->ID, 'ticket_status' )[0]->slug;
+
+  ?>
+
+  <?php if ( $ticketStatus == 'closed' ): ?>
+    <div class="ticketing-closed">
+      <p>Ticket is closed. Comments are no longer allowed. If there is a new issue, please create a new ticket.</p>
+    </div><!-- .ticketing-closed -->
+  <?php else: ?>
+    <?php comment_form(); ?>
+  <?php endif; ?>
 </section>
