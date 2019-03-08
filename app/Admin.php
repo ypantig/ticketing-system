@@ -120,17 +120,10 @@ class Admin {
           // (sections are registered for "yp_ticket_system", each field is registered to a specific section)
           do_settings_sections( 'yp_ticket_system' );
 
-          $success = esc_attr( get_option( 'yp_ticket_success_message' ) );
-
-          if ( $success == '' ) {
-            $success = __( 'Your ticket has been submitted. We will get back to you as soon as we can.' );
-          }
-
-          $error = esc_attr( get_option( 'yp_ticket_error_message' ) );
-
-          if ( $error == '' ) {
-            $error = __( 'There\'s something wrong with submitting the form. Please try agian later.' );
-          }
+          $messages = [
+            'success' => get_option( 'yp_ticket_success_message' ) ? esc_attr( get_option( 'yp_ticket_success_message' ) ) : __( 'Your ticket has been submitted. We will get back to you as soon as we can.' ),
+            'error' => get_option( 'yp_ticket_error_message' ) ? esc_attr( get_option( 'yp_ticket_error_message' ) ) : __( 'There\'s something wrong with submitting the form. Please try agian later.' ),
+          ];
 
           $email = [
             'from' => [
@@ -144,14 +137,14 @@ class Admin {
         <div class="inner">
           <table class="form-table">
             <tr>
-              <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;">Messages</h3></th>
+              <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;"><?php echo __( 'Messages' ); ?></h3></th>
             </tr>
             <tr valign="top">
               <th scope="row">
                 <label for="yp_ticket_success_message"><?php echo __( 'Success Message' ); ?></label>
               </th>
               <td>
-                <input type="text" class="regular-text" name="yp_ticket_success_message" value="<?php echo $success; ?>" />
+                <input type="text" class="regular-text" name="yp_ticket_success_message" value="<?php echo $messages[ 'success' ]; ?>" />
               </td>
             </tr>
             <tr valign="top">
@@ -159,14 +152,14 @@ class Admin {
                 <label for="yp_ticket_error_message"><?php echo __( 'Error Message' ); ?></label>
               </th>
               <td>
-                <input type="text" class="regular-text" name="yp_ticket_error_message" value="<?php echo $error; ?>" />
+                <input type="text" class="regular-text" name="yp_ticket_error_message" value="<?php echo $messages[ 'error' ]; ?>" />
               </td>
             </tr>
           </table>
 
           <table class="form-table">
             <tr>
-              <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;">Email Notification</h3></th>
+              <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;"><?php echo __( 'Email Notification' ); ?></h3></th>
             </tr>
             <tr valign="top">
               <th scope="row">
