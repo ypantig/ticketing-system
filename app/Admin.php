@@ -126,10 +126,14 @@ class Admin {
           ];
 
           $email = [
+            //
             'from' => [
               'name' => get_option( 'yp_ticket_notification_from_name' ) ? esc_attr( get_option( 'yp_ticket_notification_from_name' ) ) : get_option( 'blogname' ),
-              'email' => get_option( 'yp_ticket_notification_from_email' ) ? esc_attr( get_option( 'yp_ticket_notification_from_email' ) ) : get_option( 'admin_email' ),
             ],
+            // email to notify
+            'to' => [
+              'email' => get_option( 'yp_ticket_notification_to_email' ) ? esc_attr( get_option( 'yp_ticket_notification_to_email' ) ) : get_option( 'admin_email' ),
+            ]
           ];
 
         ?>
@@ -171,10 +175,10 @@ class Admin {
             </tr>
             <tr valign="top">
               <th scope="row">
-                <label for="yp_ticket_notification_from_email"><?php echo __( 'From Email' ); ?></label>
+                <label for="yp_ticket_notification_to_email"><?php echo __( 'Email to send notification to' ); ?></label>
               </th>
               <td>
-                <input type="text" class="regular-text" name="yp_ticket_notification_from_email" value="<?php echo $email[ 'from' ][ 'email' ]; ?>" />
+                <input type="text" class="regular-text" name="yp_ticket_notification_to_email" value="<?php echo $email[ 'to' ][ 'email' ]; ?>" />
               </td>
             </tr>
           </table>
