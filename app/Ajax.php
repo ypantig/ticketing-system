@@ -58,7 +58,6 @@ class Ajax {
     $error = '';
     $attachment = $_POST[ 'attachment' ];
     update_post_meta( $postID, 'yp_ticket_attachment', $attachment[ 'id' ] );
-    // $attachment = \YP\FileUpload::uploadFile( $_FILES, 'attachment', $postID, true );
 
     $data = [
       'post' => $post,

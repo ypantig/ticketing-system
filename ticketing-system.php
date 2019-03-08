@@ -47,6 +47,7 @@ class YPTicketingSystem {
     new \YP\Shortcodes();
     new \YP\Comments();
     new \YP\Theme();
+    new \YP\Tickets();
 
   }
 

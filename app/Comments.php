@@ -110,7 +110,7 @@ class Comments {
 
           <small>
             <?php echo get_comment_author( $comment ); ?>
-            <em class="text-grey-opacity xxs"><?php echo get_comment_date( 'F j, Y g:mA', $comment ); ?></em>
+            <em class="text-grey-opacity xxs d-block"><?php echo get_comment_date( 'F j, Y g:mA', $comment ); ?></em>
           </small>
 
         </div>

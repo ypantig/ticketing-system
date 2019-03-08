@@ -32,45 +32,11 @@ class Shortcodes {
       <div id="tickets"></div>
     </div>
 
-    <?php /*
-    <div class="row no-gutters list">
-
-      <?php if( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post(); ?>
-
-        <?php
-
-          $post = $query->post;
-          $priority = get_the_terms( $post, 'ticket_priority' )[0]->name;
-          $status = get_the_terms( $post, 'ticket_status' )[0]->name;
-
-        ?>
-
-        <div class="col-12 list__item">
-          <div class="d-flex no-gutters">
-            <div class="col-12 col-md-9">
-              <h4><?php echo $post->post_title; ?></h4>
-              <?php echo wp_trim_excerpt( $post->post_content ); ?>
-            </div><!-- .col-12 col-md-6 -->
-            <div class="col-12 col-md-3 text-right">
-              <strong><?php echo __( 'Priority', 'yp-ticketing-system' ); ?>:</strong>
-              <?php echo $priority; ?><br />
-              <strong><?php echo __( 'Status', 'yp-ticketing-system' ); ?>:</strong>
-              <?php echo $status; ?>
-            </div><!-- .col-12 col-md-6 text-right -->
-          </div><!-- .row -->
-        </div><!-- .col-12 -->
-
-      <?php endwhile; wp_reset_postdata(); endif;  ?>
-
-    </div><!-- .row -->
-
     <?php
-    */
 
     $markup = ob_get_clean();
 
     return $markup;
-
 
   }
 
@@ -189,7 +155,6 @@ class Shortcodes {
             <label for="attachment"><?php echo __( 'Upload file', 'yp-ticketing-system' ); ?></label>
             <div class="yp-ticket-upload-field">
               <input type="file" name="async-upload" id="attachment" class="js-attachment sr-only" />
-              <input type="hidden" name="uploaded_file" class="js-uploaded-file">
               <div class="yp-ticket-upload-error js-yp-upload-error small"></div><!-- .upload_error -->
               <button type="button" class="js-file-upload btn btn--secondary">Upload file</button>
               <span class="js-file-name yp-ticket-upload-filename"></span>

@@ -54,32 +54,8 @@ class Admin {
 
     register_setting( 'yp_ticket_system', 'yp_ticket_success_message' );
     register_setting( 'yp_ticket_system', 'yp_ticket_error_message' );
-
-    // // register a new setting for "yp_ticket_system" page
-    // register_setting( 'yp_ticket_system', 'yp_tickets_options' );
-
-    // // register a new section in the "yp_ticket_system" page
-    // add_settings_section(
-    //   'yp_ticket_system_section_developers',
-    //   __( 'The Matrix has you.', 'yp-ticketing-system' ),
-    //   [ &$this, 'yp_tickets_system_section_developers_cb' ],
-    //   'yp_ticket_system'
-    // );
-
-    // // register a new field in the "yp_ticket_system_section_developers" section, inside the "yp_tickets_system" page
-    // add_settings_field(
-    //   'yp_tickets_system_field_pill', // as of WP 4.6 this value is used only internally
-    //   // use $args' label_for to populate the id inside the callback
-    //   __( 'Pill', 'yp-ticketing-system' ),
-    //   [ &$this, 'yp_tickets_system_field_pill_cb' ],
-    //   'yp_ticket_system',
-    //   'yp_ticket_system_section_developers',
-    //   [
-    //     'label_for' => 'yp_tickets_system_field_pill',
-    //     'class' => 'yp_tickets_system_row',
-    //     'yp_tickets_system_custom_data' => 'custom',
-    //   ]
-    // );
+    register_setting( 'yp_ticket_system', 'yp_ticket_notification_from_name' );
+    register_setting( 'yp_ticket_system', 'yp_ticket_notification_from_email' );
 
   }
 
@@ -156,10 +132,20 @@ class Admin {
             $error = __( 'There\'s something wrong with submitting the form. Please try agian later.' );
           }
 
+          $email = [
+            'from' => [
+              'name' => get_option( 'yp_ticket_notification_from_name' ) ? esc_attr( get_option( 'yp_ticket_notification_from_name' ) ) : get_option( 'blogname' ),
+              'email' => get_option( 'yp_ticket_notification_from_email' ) ? esc_attr( get_option( 'yp_ticket_notification_from_email' ) ) : get_option( 'admin_email' ),
+            ],
+          ];
+
         ?>
 
         <div class="inner">
           <table class="form-table">
+            <tr>
+              <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;">Messages</h3></th>
+            </tr>
             <tr valign="top">
               <th scope="row">
                 <label for="yp_ticket_success_message"><?php echo __( 'Success Message' ); ?></label>
@@ -177,6 +163,28 @@ class Admin {
               </td>
             </tr>
           </table>
+
+          <table class="form-table">
+            <tr>
+              <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;">Email Notification</h3></th>
+            </tr>
+            <tr valign="top">
+              <th scope="row">
+                <label for="yp_ticket_notification_from_name"><?php echo __( 'From Name' ); ?></label>
+              </th>
+              <td>
+                <input type="text" class="regular-text" name="yp_ticket_notification_from_name" value="<?php echo $email[ 'from' ][ 'name' ]; ?>" />
+              </td>
+            </tr>
+            <tr valign="top">
+              <th scope="row">
+                <label for="yp_ticket_notification_from_email"><?php echo __( 'From Email' ); ?></label>
+              </th>
+              <td>
+                <input type="text" class="regular-text" name="yp_ticket_notification_from_email" value="<?php echo $email[ 'from' ][ 'email' ]; ?>" />
+              </td>
+            </tr>
+          </table>
         </div><!-- .inner -->
 
         <?php
@@ -189,15 +197,6 @@ class Admin {
       </form>
 
     </div>
-    <!-- <div class="wrap postbox-container">
-      <h2>Import Restaurant Meals</h2>
-
-      <div class="acf-box">
-        <div class="inner">
-          <p>This tool will import the list and <strong>replace</strong> the number of meals shared if that restaurant exists in the list.</p>
-        </div>
-      </div>
-    </div> -->
 
     <?php
 
