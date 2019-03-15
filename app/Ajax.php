@@ -46,6 +46,7 @@ class Ajax {
       'post_author' => $request[ 'post_author' ],
       'post_type' => 'yp_ticket',
       'post_status' => 'publish',
+      'comment_status' => 'open',
     ];
 
     $postID = wp_insert_post( $post );
@@ -58,6 +59,14 @@ class Ajax {
     $error = '';
     $attachment = $_POST[ 'attachment' ];
     update_post_meta( $postID, 'yp_ticket_attachment', $attachment[ 'id' ] );
+
+    update_post_meta( $postID, 'new_ticket_admin', '1' );
+    update_post_meta( $postID, 'new_ticket_author', '0' );
+    update_post_meta( $postID, 'is_new_ticket', '1' );
+    update_post_meta( $postID, 'is_commented_ticket', '0' );
+
+    // Tickets::updateUserTicketCount( 'increment', $request[ 'post_author' ], $postID );
+    Tickets::updateAdminTicketCount( 'increment', $postID );
 
     $data = [
       'post' => $post,

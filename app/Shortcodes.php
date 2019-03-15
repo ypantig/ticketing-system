@@ -73,6 +73,7 @@ class Shortcodes {
       <div class="yp-tickets__form-inner js-yp-ticket-form-inner">
         <input type="hidden" name="ID" value=""/>
         <input type="hidden" name="post_author" value="<?php echo $current_user->ID; ?>"/>
+        <input type="hidden" name="blog_id" value="<?php echo get_current_blog_id(); ?>"/>
 
         <div class="row">
           <div class="col-12 form-field">
@@ -147,7 +148,6 @@ class Shortcodes {
           <?php
 
             echo $commentClass->buildPriorityField();
-            // echo $commentClass->buildUploadField();
 
           ?>
 

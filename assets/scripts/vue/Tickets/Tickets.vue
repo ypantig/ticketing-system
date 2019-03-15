@@ -30,6 +30,10 @@
           <div class="col-12 col-md-8">
             <span class="h4 d-block" v-html="post.post_title"></span>
             <span class="text-grey-opacity" v-html="post.custom.excerpt"></span>
+            <span class="list__notification text-red" v-if="(post.custom.new_ticket.author || post.custom.new_ticket.admin)">
+              <em v-if="post.custom.ticket_status.new && is_admin_user">New ticket!</em>
+              <em v-if="post.custom.ticket_status.updated">New update to ticket!</em>
+            </span>
           </div>
 
           <div class="col-12 col-md-4 text-right">
@@ -37,10 +41,11 @@
               <strong><span v-html="term.taxonomy.labels.singular_name"></span>:</strong> <span v-html="term.name"></span>
             </div>
           </div>
+
         </a>
       </div><!-- .col-12 -->
 
-      <div class="col-12" v-if="noResults">{{ noResults }}</div><!-- .col-12 -->
+      <div class="col-12" v-if="noResults" v-html="noResults"></div><!-- .col-12 -->
     </div><!-- .row -->
   </div>
 </template>
@@ -147,6 +152,7 @@ export default {
         }
 
         this.posts = results.results;
+        this.is_admin_user = results.is_admin_user;
 
       })
 

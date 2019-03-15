@@ -45,46 +45,57 @@ class CustomFields {
   public function ticketInformation( $post ) {
 
     $attachmentID = get_post_meta( $post->ID, 'yp_ticket_attachment', true );
+    $notify = get_post_meta( $post->ID, 'yp_ticket_notify_author', true );
 
     ?>
 
     <div class="yp-tickets__box">
 
       <div class="meta-options yp-tickets__field">
-        <label class="yp-tickets__label" for="yp_ticket_attachment">
-          <strong>Attachment</strong>
-        </label>
+        <div class="field-row">
+          <label class="yp-tickets__label" for="yp_ticket_attachment">
+            <strong>Attachment</strong>
+          </label>
 
-        <?php if ( is_numeric( $attachmentID ) ): ?>
+          <?php if ( is_numeric( $attachmentID ) ): ?>
 
-          <div class="yp-ticket-attachment-details">
+            <div class="yp-ticket-attachment-details">
 
-            <?php
+              <?php
 
-              $arrAttachmentImg = wp_get_attachment_image_src( $attachmentID, 'medium' );
-              $attachmentImg = $arrAttachmentImg[0];
+                $arrAttachmentImg = wp_get_attachment_image_src( $attachmentID, 'medium' );
+                $attachmentImg = $arrAttachmentImg[0];
 
-              if ( !$arrAttachmentImg ) {
-                $attachmentUrl = wp_get_attachment_url( $attachmentID );
-                $attachmentImg = includes_url( 'images/media/' . Utils::getFileImage( $attachmentUrl ) . '.png' );
-              }
+                if ( !$arrAttachmentImg ) {
+                  $attachmentUrl = wp_get_attachment_url( $attachmentID );
+                  $attachmentImg = includes_url( 'images/media/' . Utils::getFileImage( $attachmentUrl ) . '.png' );
+                }
 
-            ?>
+              ?>
 
-            <img src="<?php echo $attachmentImg; ?>" /><br />
-            <small><?php echo $attachmentUrl; ?></small>
+              <img src="<?php echo $attachmentImg; ?>" /><br />
+              <small><?php echo $attachmentUrl; ?></small>
 
-          </div>
+            </div>
 
-        <?php endif; ?>
+          <?php endif; ?>
 
-        <input id="yp_ticket_attachment" type="file" name="yp_ticket_attachment" value="<?php echo $value; ?>" />
+          <input id="yp_ticket_attachment" type="file" name="yp_ticket_attachment" value="<?php echo $attachmentID; ?>" />
 
-        <?php
-          // Put in a hidden flag. This helps differentiate between manual saves and auto-saves (in auto-saves, the file wouldn't be passed).
-        ?>
+          <?php
+            // Put in a hidden flag. This helps differentiate between manual saves and auto-saves (in auto-saves, the file wouldn't be passed).
+          ?>
 
-        <input type="hidden" name="yp_ticket_attachment_manual_save_flag" value="true" />
+          <input type="hidden" name="yp_ticket_attachment_manual_save_flag" value="true" />
+        </div><!-- .attachment -->
+
+        <!-- <div class="field-row">
+          <div class="yp-tickets__label">Notifications</div>
+          <label for="yp_ticket_notify_author">
+            <input type="checkbox" name="yp_ticket_notify_author" id="yp_ticket_notify_author" <?php //if ( $notify || $notify == 'on' ) : echo 'checked'; endif; ?> />
+            Notify of new comments to this ticket.
+          </label>
+        </div> --><!-- .field-row -->
       </div>
     </div>
 
@@ -94,13 +105,18 @@ class CustomFields {
 
   public function save_post__saveFieldData( $postID ) {
 
-    // Make sure our flag is in there, otherwise it's an autosave and we should bail.
-    if ( !$postID && !isset( $_POST[ 'yp_ticket_attachment_manual_save_flag' ] ) ) {
+    if ( !$postID ) {
       return;
     }
 
-    \YP\FileUpload::uploadFile( $_FILES, 'yp_ticket_attachment', $postID );
-    update_post_meta( $postID, '_yp_ticket_attachment', $_POST[ 'yp_ticket_attachment' ] );
+    // Make sure our flag is in there, otherwise it's an autosave and we should bail.
+    update_post_meta( $postID, 'yp_ticket_notify_author', isset( $_POST[ 'yp_ticket_notify_author' ] ) );
+
+    // Make sure our flag is in there, otherwise it's an autosave and we should bail.
+    if ( isset( $_POST[ 'yp_ticket_attachment_manual_save_flag' ] ) ) {
+      \YP\FileUpload::uploadFile( $_FILES, 'yp_ticket_attachment', $postID );
+      update_post_meta( $postID, 'yp_ticket_attachment', $_POST[ 'yp_ticket_attachment' ] );
+    }
 
   }
 

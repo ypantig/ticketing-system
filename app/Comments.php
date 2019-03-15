@@ -16,9 +16,34 @@ class Comments {
 
     add_filter( 'comments_template', [ &$this, 'comments_template__updateCommentTemplate' ] );
 
-    // add_action( 'comment_form_logged_in', [ &$this, 'comment_form_logged_in__modifyCommentForm' ] );
-
     add_action( 'comment_post', [ &$this, 'comment_post__changeStatusIfNeeded' ], 10, 2 );
+    add_action( 'comment_post', [ &$this, 'comment_post__changeTicketNotifier' ], 10, 2 );
+
+    // add_action( 'init', [ &$this, 'init__updateCommentStatus' ] );
+
+  }
+
+  public function init__updateCommentStatus() {
+
+    global $ticketPostType;
+    $args = array(
+      'posts_per_page' => -1,
+      'post_type' => $ticketPostType,
+    );
+
+    $query = new \WP_Query( $args );
+
+    if( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();
+
+      $ticketStatus = get_the_terms( $query->post->ID, 'ticket_status' )[0]->slug;
+
+      if ( $ticketStatus == 'open' ) {
+        wp_update_post([
+          'comment_status' => 'open',
+        ]);
+      }
+
+    endwhile; wp_reset_postdata(); endif;
 
   }
 
@@ -35,21 +60,34 @@ class Comments {
 
   }
 
-  public function comment_form_logged_in__modifyCommentForm( $postID ) {
+  /**
+   * if user / admin posted a comment on the ticket,
+   * make sure to reset the post_meta to true for user / admin
+   * to display the notification
+   *
+   * @author Ynah Pantig <me@ynahpantig.com>
+   */
+  public function comment_post__changeTicketNotifier( $commentID, $comment ) {
 
-    $userID = get_current_user_id();
-    if ( !user_can( $userID, 'remove_users' ) ) {
-      return;
+    $post = get_post( $_POST[ 'comment_post_ID' ] );
+    $currentUser = wp_get_current_user();
+
+    update_post_meta( $post->ID, 'is_new_ticket', '0' );
+    update_post_meta( $post->ID, 'is_commented_ticket', '1' );
+
+    // since user posted the comment,
+    // reset the value for the admin
+    if ( $currentUser->ID == $post->post_author ) {
+      update_post_meta( $post->ID, 'new_ticket_admin', '1' );
+      Tickets::updateAdminTicketCount( 'increment', $post->ID );
     }
 
-    $markup = '';
-    $currentStatus = get_the_terms( $postID, 'ticket_status' )[0];
-
-    $markup .= '<div class="row">';
-    $markup .= $this->buildStatusField( $currentStatus );
-    $markup .= '</div>';
-
-    echo $markup;
+    // since the admin posted the comment,
+    // reset the value for the author
+    if ( Users::allowedAdminUser( $currentUser->roles ) ) {
+      update_post_meta( $post->ID, 'new_ticket_author', '1' );
+      Tickets::updateUserTicketCount( 'increment', $post->post_author, $post->ID );
+    }
 
   }
 

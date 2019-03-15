@@ -19,6 +19,32 @@ class Admin {
     add_action( 'admin_init', [ &$this, 'admin_init__initPluginSettings' ] );
   }
 
+  /**
+   * get plugin settings
+   *
+   * @author Ynah Pantig
+   * @param
+   * @return
+   */
+
+  public static function pluginSettings(  )
+  {
+
+    $fields = [
+      'yp_ticket_success_message',
+      'yp_ticket_error_message',
+      'yp_ticket_page_list',
+      'yp_ticket_form_submit',
+    ];
+
+    foreach ( $fields as $field ) {
+      $settings[ str_replace( 'yp_ticket_', '', $field ) ] = get_option( $field );
+    }
+
+    return $settings;
+
+  }
+
   public function admin_init__allowRolesToUpload() {
     $roles = [
       'administrator',
@@ -37,10 +63,16 @@ class Admin {
 
   public function admin_notices__addAdminNotice() {
 
-    global $ticketPostType;
+    if ( get_current_blog_id() == 1 ) {
+      return;
+    }
 
     if ( is_plugin_inactive( 'comment-attachment/comment-attachment.php' ) ) {
       echo '<div class="notice"><p>Please install <a href="https://wordpress.org/plugins/comment-attachment/" target="_blank">Comment Attachment</a> plugin to allow users to upload attachments to their tickets.</p></div>';
+    }
+
+    if ( is_plugin_inactive( 'notification/notification.php' ) ) {
+      echo '<div class="notice"><p>Please install <a href="https://wordpress.org/plugins/notification/" target="_blank">Notification</a> plugin to allow for email notifications.</p></div>';
     }
 
   }
@@ -54,8 +86,13 @@ class Admin {
 
     register_setting( 'yp_ticket_system', 'yp_ticket_success_message' );
     register_setting( 'yp_ticket_system', 'yp_ticket_error_message' );
-    register_setting( 'yp_ticket_system', 'yp_ticket_notification_from_name' );
-    register_setting( 'yp_ticket_system', 'yp_ticket_notification_from_email' );
+    // register_setting( 'yp_ticket_system', 'yp_ticket_notification_from_name' );
+    // register_setting( 'yp_ticket_system', 'yp_ticket_notification_from_email' );
+    register_setting( 'yp_ticket_system', 'yp_ticket_page_list' );
+    register_setting( 'yp_ticket_system', 'yp_ticket_form_submit' );
+
+    // add_blog_option( get_current_blog_id(), 'yp_ticket_new_tickets_admin', 0 );
+    // add_blog_option( get_current_blog_id(), 'yp_ticket_new_tickets_author', 0 );
 
   }
 
@@ -125,20 +162,59 @@ class Admin {
             'error' => get_option( 'yp_ticket_error_message' ) ? esc_attr( get_option( 'yp_ticket_error_message' ) ) : __( 'There\'s something wrong with submitting the form. Please try agian later.' ),
           ];
 
-          $email = [
-            //
-            'from' => [
-              'name' => get_option( 'yp_ticket_notification_from_name' ) ? esc_attr( get_option( 'yp_ticket_notification_from_name' ) ) : get_option( 'blogname' ),
-            ],
-            // email to notify
-            'to' => [
-              'email' => get_option( 'yp_ticket_notification_to_email' ) ? esc_attr( get_option( 'yp_ticket_notification_to_email' ) ) : get_option( 'admin_email' ),
-            ]
+          $pages = [
+            'list' => get_option( 'yp_ticket_page_list' ) ? esc_attr( get_option( 'yp_ticket_page_list' ) ) : '',
+            'form' => get_option( 'yp_ticket_form_submit' ) ? esc_attr( get_option( 'yp_ticket_form_submit' ) ) : '',
           ];
+
+          // $email = [
+          //   //
+          //   'from' => [
+          //     'name' => get_option( 'yp_ticket_notification_from_name' ) ? esc_attr( get_option( 'yp_ticket_notification_from_name' ) ) : get_option( 'blogname' ),
+          //   ],
+          //   // email to notify
+          //   'to' => [
+          //     'email' => get_option( 'yp_ticket_notification_to_email' ) ? esc_attr( get_option( 'yp_ticket_notification_to_email' ) ) : get_option( 'admin_email' ),
+          //   ]
+          // ];
+
+          $wpPages = get_pages();
 
         ?>
 
         <div class="inner">
+          <table class="form-table">
+            <tr>
+              <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;"><?php echo __( 'Pages' ); ?></h3></th>
+            </tr>
+            <tr valign="top">
+              <th scope="row">
+                <label for="yp_ticket_page_list"><?php echo __( 'Ticket List Page' ); ?></label>
+              </th>
+              <td>
+                <select name="yp_ticket_page_list" class="regular-text">
+                  <option disabled <?php if ( $pages[ 'list' ] == '' ) echo 'selected'; ?>>Select page</option>
+                  <?php foreach ( $wpPages as $page ): ?>
+                    <option value="<?php echo $page->ID; ?>" <?php if ( $pages[ 'list' ] == $page->ID ) echo 'selected'; ?>><?php echo $page->post_title; ?></option>
+                  <?php endforeach ?>
+                </select>
+              </td>
+            </tr>
+            <tr valign="top">
+              <th scope="row">
+                <label for="yp_ticket_form_submit"><?php echo __( 'Ticket Form' ); ?></label>
+              </th>
+              <td>
+                <select name="yp_ticket_form_submit" class="regular-text">
+                  <option disabled <?php if ( $pages[ 'form' ] == '' ) echo 'selected'; ?>>Select page</option>
+                  <?php foreach ( $wpPages as $page ): ?>
+                    <option value="<?php echo $page->ID; ?>" <?php if ( $pages[ 'form' ] == $page->ID ) echo 'selected'; ?>><?php echo $page->post_title; ?></option>
+                  <?php endforeach ?>
+                </select>
+              </td>
+            </tr>
+          </table>
+
           <table class="form-table">
             <tr>
               <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;"><?php echo __( 'Messages' ); ?></h3></th>
@@ -161,7 +237,7 @@ class Admin {
             </tr>
           </table>
 
-          <table class="form-table">
+          <!-- <table class="form-table">
             <tr>
               <th scope="row"><h3 style="margin-bottom: 0; margin-top: 0;"><?php echo __( 'Email Notification' ); ?></h3></th>
             </tr>
@@ -181,7 +257,7 @@ class Admin {
                 <input type="text" class="regular-text" name="yp_ticket_notification_to_email" value="<?php echo $email[ 'to' ][ 'email' ]; ?>" />
               </td>
             </tr>
-          </table>
+          </table> -->
         </div><!-- .inner -->
 
         <?php

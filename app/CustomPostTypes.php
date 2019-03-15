@@ -28,6 +28,7 @@ class CustomPostTypes {
           'comments',
           'editor',
           'author',
+          'custom_fields',
         ],
       ],
     ],

@@ -6,45 +6,101 @@ class Tickets {
 
   public function __construct() {
 
-    add_action( 'save_post', [ &$this, 'save_post__onSaveTicket' ] );
+    // add_action( 'save_post', [ &$this, 'save_post__onSaveTicket' ] );
+    add_action( 'wp', [ &$this, 'wp__checkIfNewTicket' ] );
 
   }
 
-  public function save_post__onSaveTicket( $postID ) {
+  public function wp__checkIfNewTicket() {
 
-    // If this is just a revision, don't send the email.
-    if ( wp_is_post_revision( $postID ) ) {
+    global $ticketPostType, $post;
+
+    if ( is_admin() ) {
       return;
     }
 
-    $blogName = get_option( 'blogname' );
-    $email = get_option( 'yp_ticket_notification_to_email' ) ? get_option( 'yp_ticket_notification_to_email' ) : get_option( 'admin_email' );
-    $fromName = get_option( 'yp_ticket_notification_from_name' ) ? get_option( 'yp_ticket_notification_from_name' ) : $blogName;
-
-    $post = get_post( $postID );
-
-    $postTitle = $post->post_title;
-    $postUrl = get_permalink( $postID );
-    $postContent = $post->post_content;
-    $subject = 'New ticket from ' . $blogName . ': ' . $postTitle;
-
-    $message = $postContent;
-    $message .= $post_title . ": " . $postUrl;
-
-    $attachment = get_post_meta( $postID, 'yp_ticket_attachment', 1 );
-    $attachments = [];
-
-    if ( $attachment ) {
-      $attachments[] = wp_get_attachment_url( $attachmentID );
+    // check if single ticket
+    if ( $post->post_type != $ticketPostType ) {
+      return;
     }
 
-    $headers = [
-      'From: ' . $fromName . '<' . $email . '>',
-    ];
+    $authorID = $post->post_author;
+    $currentUser = wp_get_current_user();
 
-    // Send email to admin / email in notification
-    wp_mail( $email, $subject, $message, $headers, $attachments );
+    if ( $currentUser->ID == $authorID ) {
+      update_post_meta( $post->ID, 'new_ticket_author', '0' );
+      Tickets::updateUserTicketCount( 'decrement', $currentUser, $post->ID );
+    }
 
+    if ( Users::allowedAdminUser( $currentUser->roles ) ) {
+      update_post_meta( $post->ID, 'new_ticket_admin', '0' );
+      Tickets::updateUserTicketCount( 'decrement', $currentUser, $post->ID );
+    }
+
+  }
+
+  public static function updateUserTicketCount( $type = 'increment', $user = '', $postID = '' ) {
+
+    if ( !empty( $user ) ) {
+      if ( is_object( $user ) ) {
+        $currentUser = $user;
+      } else {
+        $currentUser = new \WP_User( $user );
+      }
+    } else {
+      $currentUser = wp_get_current_user();
+    }
+
+    $newTickets = get_user_meta( $currentUser->ID, 'yp_new_tickets' );
+
+    if ( !empty( $newTickets ) ) {
+      $newTickets = get_user_meta( $currentUser->ID, 'yp_new_tickets', 1 );
+    }
+
+    if ( isset( $newTickets[ $postID ] ) ) {
+      $newTickets[ $postID ] = static::updateTicketNum( $newTickets[ $postID ], $type );
+    } else {
+      $newTickets[ $postID ] = static::updateTicketNum( 0, $type );
+    }
+
+    update_user_meta( $currentUser->ID, 'yp_new_tickets', $newTickets );
+
+  }
+
+  public static function updateAdminTicketCount( $type = 'increment', $postID = '' ) {
+
+    global $ticketPostType;
+
+    $admins = Users::getAdmins();
+
+    foreach ( $admins as $admin ) {
+      $newTickets = get_user_meta( $admin->ID, 'yp_new_tickets' );
+      if ( !empty( $newTickets ) ) {
+        $newTickets = get_user_meta( $admin->ID, 'yp_new_tickets', 1 );
+      }
+
+      if ( isset( $newTickets[ $postID ] ) ) {
+        $newTickets[ $postID ] = static::updateTicketNum( $newTickets[ $postID ], $type );
+      } else {
+        $newTickets[ $postID ] = static::updateTicketNum( 0, $type );
+      }
+
+      update_user_meta( $admin->ID, 'yp_new_tickets', $newTickets );
+    }
+
+  }
+
+  private static function updateTicketNum( $oldNum, $type = 'increment' ) {
+
+    $oldNum = (int) $oldNum;
+
+    if ( $type == 'increment' ) {
+      $new = $oldNum + 1;
+    } else {
+      $new = 0;
+    }
+
+    return $new;
   }
 
 }

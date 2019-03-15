@@ -31,11 +31,20 @@ class Theme {
 
     $ajaxUrl = admin_url( 'admin-ajax.php' );
 
+    $newTickets = get_user_meta( get_current_user_id(), 'yp_new_tickets', 1 );
+    $newTicketCount = 0;
+
+    foreach ( $newTickets as $id => $num ) {
+      $newTicketCount += $num;
+    }
+
     $localize = array(
       'ajax_url' => $ajaxUrl,
       'upload_url' => admin_url( 'async-upload.php' ),
       'nonce' => wp_create_nonce( 'media-form' ),
       'query_vars' => json_encode( $wp_query->query ),
+      'settings' => \YP\Admin::pluginSettings(),
+      'new_ticket_count' => $newTicketCount,
       // 'nonce' => wp_create_nonce( 'wp_rest') //secret value created every time you log in and can be used for authentication to alter content
     );
 
