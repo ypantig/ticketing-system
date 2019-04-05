@@ -49,6 +49,7 @@ class YPTicketingSystem {
     new \YP\Theme();
     new \YP\Tickets();
     new \YP\Notifications();
+    new \YP\RestApi();
 
   }
 

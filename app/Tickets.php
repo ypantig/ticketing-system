@@ -11,6 +11,35 @@ class Tickets {
 
   }
 
+  public function getAllTickets( $request ) {
+
+    $sites = get_sites([
+      'site__not_in' => [ 1 ],
+    ]);
+
+    $tickets = [];
+
+    foreach ( $sites as $site ) {
+
+      switch_to_blog( $site->blog_id );
+      $args = array(
+        'posts_per_page' => -1,
+        'post_type' => 'yp_ticket',
+      );
+
+      $query = new \WP_Query( $args );
+      if ( $query->found_posts > 0 ) {
+        $tickets[ $site->blog_id ] = $query->posts;
+      }
+
+      restore_current_blog();
+
+    }
+
+    return $tickets;
+
+  }
+
   public function wp__checkIfNewTicket() {
 
     global $ticketPostType, $post;
