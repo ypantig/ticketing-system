@@ -21,20 +21,42 @@ class Tickets {
 
     foreach ( $sites as $site ) {
 
-      switch_to_blog( $site->blog_id );
-      $args = array(
-        'posts_per_page' => -1,
-        'post_type' => 'yp_ticket',
-      );
+      $tickets[ $site->blog_id ] = self::getSiteTicket([ 'id' => $site->blog_id ]);
+      // switch_to_blog( $site->blog_id );
+      // $args = array(
+      //   'posts_per_page' => -1,
+      //   'post_type' => 'yp_ticket',
+      // );
 
-      $query = new \WP_Query( $args );
-      if ( $query->found_posts > 0 ) {
-        $tickets[ $site->blog_id ] = $query->posts;
-      }
+      // $query = new \WP_Query( $args );
+      // if ( $query->found_posts > 0 ) {
+      //   $tickets[ $site->blog_id ] = $query->posts;
+      // }
 
-      restore_current_blog();
+      // restore_current_blog();
 
     }
+
+    return $tickets;
+
+  }
+
+  public function getSiteTicket( $data ) {
+
+    $tickets = [];
+
+    switch_to_blog( $data[ 'id' ] );
+    $args = array(
+      'posts_per_page' => -1,
+      'post_type' => 'yp_ticket',
+    );
+
+    $query = new \WP_Query( $args );
+    if ( $query->found_posts > 0 ) {
+      $tickets = $query->posts;
+    }
+
+    restore_current_blog();
 
     return $tickets;
 
