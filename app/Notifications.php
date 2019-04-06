@@ -6,6 +6,8 @@ class Notifications {
 
   public function __construct() {
 
+    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
     if ( !is_plugin_active( 'notification/notification.php' ) ) {
       return;
     }

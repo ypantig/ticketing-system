@@ -20,21 +20,7 @@ class Tickets {
     $tickets = [];
 
     foreach ( $sites as $site ) {
-
       $tickets[ $site->blog_id ] = self::getSiteTicket([ 'id' => $site->blog_id ]);
-      // switch_to_blog( $site->blog_id );
-      // $args = array(
-      //   'posts_per_page' => -1,
-      //   'post_type' => 'yp_ticket',
-      // );
-
-      // $query = new \WP_Query( $args );
-      // if ( $query->found_posts > 0 ) {
-      //   $tickets[ $site->blog_id ] = $query->posts;
-      // }
-
-      // restore_current_blog();
-
     }
 
     return $tickets;
@@ -46,15 +32,30 @@ class Tickets {
     $tickets = [];
 
     switch_to_blog( $data[ 'id' ] );
+
     $args = array(
       'posts_per_page' => -1,
       'post_type' => 'yp_ticket',
     );
 
     $query = new \WP_Query( $args );
-    if ( $query->found_posts > 0 ) {
-      $tickets = $query->posts;
-    }
+
+    if( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();
+
+      $post = $query->post;
+
+      // get the ticket status
+      $post->ticket_status = get_the_terms( $post, 'ticket_status' ) ? get_the_terms( $post, 'ticket_status' )[0]->name : '';
+
+      // get the ticket service
+      $post->ticket_service = get_the_terms( $post, 'ticket_service' ) ? get_the_terms( $post, 'ticket_service' )[0]->name : '';
+
+      // get the ticket priority
+      $post->ticket_priority = get_the_terms( $post, 'ticket_priority' ) ? get_the_terms( $post, 'ticket_priority' )[0]->name : '';
+
+      $tickets[] = $post;
+
+    endwhile; wp_reset_postdata(); endif;
 
     restore_current_blog();
 
