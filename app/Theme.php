@@ -27,6 +27,8 @@ class Theme {
 
   public function wp_enqueue_scripts__addScripts() {
 
+    global $wp_query;
+
     wp_enqueue_script( 'yp/ticket_system/scripts/main', YP_TICKETS_URL . 'dist/scripts/main.js', ['jquery'], null, true );
 
     $ajaxUrl = admin_url( 'admin-ajax.php' );
