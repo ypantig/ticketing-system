@@ -46,13 +46,14 @@ class Admin {
   }
 
   public function admin_init__allowRolesToUpload() {
+
     $roles = [
       'administrator',
       'um_property-manager',
       'um_council-member',
     ];
 
-    foreach ( $excludeRoles as $role ) {
+    foreach ( $roles as $role ) {
       $role = get_role( $role );
 
       if ( ! $role->has_cap( 'upload_files' ) ) {
