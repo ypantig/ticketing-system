@@ -43,4 +43,49 @@ class Users {
     return $users;
 
   }
+
+  /**
+   * get all the buildings the specified user is a member of
+   */
+  public static function getMemberBuildings( $userID = '', $type = '' ) {
+
+    if ( $userID == '' ) {
+      $userID = get_current_user_id();
+    }
+
+    $buildings = get_field( 'building', 'user_' . $userID );
+
+    if ( $type == 'names' ) {
+      $data = [];
+      if ( !empty( $buildings ) ) {
+        foreach ( $buildings as $item ) {
+          $data[] = get_the_title( $item );
+        }
+      }
+    } else {
+      $data = $buildings;
+    }
+
+    return $data;
+
+  }
+
+  public static function getMemberMetaQuery( $key = 'building' ) {
+
+    $memberBuilding = \YP\Users::getMemberBuildings();
+    $metaQuery = [
+      'relation' => 'OR',
+    ];
+
+    foreach ( $memberBuilding as $building )
+    {
+      $metaQuery[] = [
+        'key' => $key,
+        'value' => $building,
+        'compare' => 'LIKE',
+      ];
+    }
+
+    return $metaQuery;
+  }
 }

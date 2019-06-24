@@ -37,7 +37,7 @@ export default {
     const $form = $( '.js-yp-ticket-form' );
 
     if ( $form.find( '#gotcha input' ).val() != '' ) {
-      console.log( 'You\'re not allowed to submit this form, you robot.' );
+      // console.log( 'You\'re not allowed to submit this form, you robot.' );
       return;
     }
 
@@ -104,12 +104,12 @@ export default {
         data: ticketData,
         attachment: ( data && data.data ) ? data.data : null,
       },
-      error: ( error ) => {
-        console.log( error );
+      error: () => {
+        // console.log( error );
         $form.find( '.js-yp-ticket-error' ).slideDown();
       },
-      success: ( success ) => {
-        console.log( success );
+      success: () => {
+        // console.log( success );
         $form.find( '.js-yp-ticket-form-inner' ).slideUp();
         $form.find( '.js-yp-ticket-success' ).slideDown();
 

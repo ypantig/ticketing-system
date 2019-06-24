@@ -13,32 +13,21 @@ class Tickets {
 
   public function getAllTickets( $request ) {
 
-    $sites = get_sites([
-      'site__not_in' => [ 1 ],
-    ]);
-
-    $tickets = [];
-
-    foreach ( $sites as $site ) {
-      $tickets[ $site->blog_id ] = self::getSiteTicket([ 'id' => $site->blog_id ]);
-    }
-
-    return $tickets;
-
-  }
-
-  public function getSiteTicket( $data ) {
-
-    $tickets = [];
-
-    switch_to_blog( $data[ 'id' ] );
-
     $args = array(
       'posts_per_page' => -1,
       'post_type' => 'yp_ticket',
     );
 
     $query = new \WP_Query( $args );
+    $tickets = self::getSiteTicket( $query );
+
+    return $tickets;
+
+  }
+
+  public function getSiteTicket( $query ) {
+
+    $tickets = [];
 
     if( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();
 
@@ -56,8 +45,6 @@ class Tickets {
       $tickets[] = $post;
 
     endwhile; wp_reset_postdata(); endif;
-
-    restore_current_blog();
 
     return $tickets;
 

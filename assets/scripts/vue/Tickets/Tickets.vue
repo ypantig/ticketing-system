@@ -37,6 +37,7 @@
           </div>
 
           <div class="col-12 col-md-4 text-right">
+            <span class="text-grey-opacity" v-if="is_admin_user" v-html="post.custom.building"></span>
             <div v-for="term in post.terms">
               <strong><span v-html="term.taxonomy.labels.singular_name"></span>:</strong> <span v-html="term.name"></span>
             </div>
@@ -132,11 +133,11 @@ export default {
     buildPosts( data ) {
 
       const allPosts = new wp.api.collections.Yp_ticket();
-        console.log( this.searching );
+      // console.log( this.searching );
 
       allPosts.fetch({ data }).done( ( results ) => {
 
-        console.log( results );
+        // console.log( results );
         this.searching = false;
 
         if ( !results ) {

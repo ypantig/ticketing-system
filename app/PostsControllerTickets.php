@@ -34,8 +34,10 @@ class PostsControllerTickets extends \WP_REST_Posts_Controller {
     $postsPerPage = $this->postTypeData[ 'posts_per_page' ];
     $paged = get_query_var( 'paged' ) == 0 ? 1 : get_query_var( 'paged' );
 
-    $currentUserMeta = get_userdata( get_current_user_id() );
+    $currentUserID = get_current_user_id();
+    $currentUserMeta = get_userdata( $currentUserID );
     $currentUserRoles = $currentUserMeta->roles;
+    $buildings = \YP\Users::getMemberBuildings( $currentUserID );
 
     $args = [
       'per_page' => $postsPerPage,
@@ -44,6 +46,7 @@ class PostsControllerTickets extends \WP_REST_Posts_Controller {
       'page' => $paged,
       'author__in' => [ $currentUserMeta->ID ],
       'post_type' => $this->postTypeData[ 'post_type' ],
+      'meta_query' => \YP\Users::getMemberMetaQuery( 'yp_ticket_building' ),
     ];
 
     if ( \YP\Users::allowedAdminUser( $currentUserRoles ) ) {
@@ -93,6 +96,7 @@ class PostsControllerTickets extends \WP_REST_Posts_Controller {
 
     $data = [
       'no_results' => $noResults,
+      'args' => $args,
       // 'new_ticket_count' => get_user_meta( $currentUserMeta->ID, 'yp_new_tickets', 1 ),
       'is_admin_user' => \YP\Users::allowedAdminUser( $currentUserRoles ),
     ];
@@ -111,6 +115,7 @@ class PostsControllerTickets extends \WP_REST_Posts_Controller {
       $post->terms = (object) $terms;
       $post->custom = (object) [
         'excerpt' => wpautop( wp_trim_excerpt( $post->post_content ) ),
+        'building' => '<strong>' . __( 'Building:' ) . '</strong> ' . get_the_title( get_post_meta( $post->ID, 'yp_ticket_building', 1 ) ),
         'ticket_status' => [
           'new' => (bool) get_post_meta( $post->ID, 'is_new_ticket', 1 ),
           'updated' => (bool) get_post_meta( $post->ID, 'is_commented_ticket', 1 )

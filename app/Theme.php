@@ -36,8 +36,10 @@ class Theme {
     $newTickets = get_user_meta( get_current_user_id(), 'yp_new_tickets', 1 );
     $newTicketCount = 0;
 
-    foreach ( $newTickets as $id => $num ) {
-      $newTicketCount += $num;
+    if ( $newTickets ) {
+      foreach ( $newTickets as $id => $num ) {
+        $newTicketCount += $num;
+      }
     }
 
     $localize = array(

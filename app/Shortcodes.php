@@ -49,16 +49,15 @@ class Shortcodes {
   public function add_shortcode__ypSubmitTickets() {
 
     // get the current user
-    $current_user = $GLOBALS['current_user'];
+    $currentUser = $GLOBALS['current_user'];
 
     $priorityTerms = CustomTaxonomies::getTermsFromTaxonomy( 'ticket_priority' );
     $serviceTerms = CustomTaxonomies::getTermsFromTaxonomy( 'ticket_service' );
+    $buildings = Users::getMemberBuildings( $currentUser->ID );
 
-    global $wp_roles;
     $markup = '';
 
-    $usermeta = get_userdata( $current_user->ID );
-    $commentClass = new \YP\Comments();
+    $formClass = new \YP\Form();
 
     ob_start();
 
@@ -66,70 +65,30 @@ class Shortcodes {
 
     <form action="" id="yp-tickets__form" class="yp-tickets__form js-yp-ticket-form" enctype="multipart/form-data">
       <div class="yp-tickets__messages">
-        <div class="yp-ticket__message yp-tickets__success js-yp-ticket-success"><?php echo get_option( 'yp_ticket_success_message' ); ?></div><!-- .yp-tickets__success -->
-        <div class="yp-ticket__message yp-tickets__error js-yp-ticket-error"><?php echo get_option( 'yp_ticket_error_message' ); ?></div><!-- .yp-tickets__success -->
-      </div><!-- .yp-tickets__messages -->
+        <div class="yp-ticket__message yp-tickets__success js-yp-ticket-success"><?php echo get_option( 'yp_ticket_success_message' ); ?></div>
+        <div class="yp-ticket__message yp-tickets__error js-yp-ticket-error"><?php echo get_option( 'yp_ticket_error_message' ); ?></div>
+      </div>
 
       <div class="yp-tickets__form-inner js-yp-ticket-form-inner">
-        <input type="hidden" name="ID" value=""/>
-        <input type="hidden" name="post_author" value="<?php echo $current_user->ID; ?>"/>
-        <input type="hidden" name="blog_id" value="<?php echo get_current_blog_id(); ?>"/>
+        <input type="hidden" name="ID" value="" />
+        <input type="hidden" name="post_author" value="<?php echo $currentUser->ID; ?>" />
 
         <div class="row">
           <div class="col-12 form-field">
-            <label for="building-name">
-              <?php echo __( 'Building', 'yp-ticketing-system' ); ?>
-            </label>
-
-            <div class="disabled-field">
-              <i class="fas fa-pencil-alt banned"></i>
-              <input disabled type="text" name="building-name" value="<?php echo get_bloginfo( 'title' ); ?>" />
-            </div><!-- .disabled-field -->
-          </div><!-- .col-12 form-field -->
+            <?php echo $formClass->buildBuildingField(); ?>
+          </div>
 
           <div class="col-12 form-field col-md-6">
-            <label for="user-name">
-              <?php echo __( 'Name', 'yp-ticketing-system' ); ?>
-            </label>
-
-            <div class="disabled-field">
-              <i class="fas fa-pencil-alt banned"></i>
-              <?php
-
-                $name = $usermeta->display_name;
-
-                if ( empty( $name ) ) {
-                  $name = ucfirst( $usermeta->user_nicename );
-                }
-
-              ?>
-              <input disabled type="text" name="user_name" value="<?php echo $name; ?>" />
-              <input disabled type="hidden" name="user_id" value="<?php echo $usermeta->ID; ?>" />
-            </div><!-- .disabled-field -->
-          </div><!-- .col-12 form-field -->
+            <?php echo $formClass->buildUserField( $currentUser ); ?>
+          </div>
 
           <div class="col-12 form-field col-md-6">
-            <label for="user-role">
-              <?php echo __( 'Role', 'yp-ticketing-system' ); ?>
-            </label>
+            <?php echo $formClass->buildRoleField( $currentUser ); ?>
+          </div>
 
-            <div class="disabled-field">
-              <i class="fas fa-pencil-alt banned"></i>
-              <?php
-
-                $roleSlug = $usermeta->roles[0];
-                $role = $wp_roles->role_names[ $roleSlug ];
-
-              ?>
-              <input disabled type="text" name="user-role" value="<?php echo $role; ?>" />
-            </div><!-- .disabled-field -->
-          </div><!-- .col-12 form-field -->
-
-          <?php
-
-            echo $commentClass->buildServiceField();
-
-          ?>
+          <div class="col-12 form-field col-md-6">
+            <?php echo $formClass->buildServiceField(); ?>
+          </div>
 
           <div class="col-12 form-field">
             <label for="post_title">
@@ -145,20 +104,18 @@ class Shortcodes {
             <textarea name="post_content" rows="6"></textarea>
           </div>
 
-          <?php
-
-            echo $commentClass->buildPriorityField();
-
-          ?>
+          <div class="col-12 form-field col-md-6">
+            <?php echo $formClass->buildPriorityField(); ?>
+          </div>
 
           <div class="col-12 form-field col-md-6">
             <label for="attachment"><?php echo __( 'Upload file', 'yp-ticketing-system' ); ?></label>
             <div class="yp-ticket-upload-field">
               <input type="file" name="async-upload" id="attachment" class="js-attachment sr-only" />
-              <div class="yp-ticket-upload-error js-yp-upload-error small"></div><!-- .upload_error -->
+              <div class="yp-ticket-upload-error js-yp-upload-error small"></div>
               <button type="button" class="js-file-upload btn btn--secondary">Upload file</button>
               <span class="js-file-name yp-ticket-upload-filename"></span>
-            </div><!-- .upload-field -->
+            </div>
           </div>
 
           <div class="col-12 form-field">
@@ -171,9 +128,9 @@ class Shortcodes {
 
             <?php wp_nonce_field( 'yp-ticket-system' ); ?>
             <input type="submit" class="btn btn--primary js-submit-ticket" value="<?php echo __( 'Submit Ticket' ); ?>" />
-          </div><!-- .col-12 -->
+          </div>
         </div>
-      </div><!-- .yp-tickets__form-inner -->
+      </div>
     </form>
 
   <?php

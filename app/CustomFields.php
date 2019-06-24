@@ -45,14 +45,27 @@ class CustomFields {
   public function ticketInformation( $post ) {
 
     $attachmentID = get_post_meta( $post->ID, 'yp_ticket_attachment', true );
+    $buildingID = get_post_meta( $post->ID, 'yp_ticket_building', true );
     $notify = get_post_meta( $post->ID, 'yp_ticket_notify_author', true );
+
+    $buildingName = ( !empty( $buildingID ) ) ? $buildingName = get_the_title( $buildingID ) : '';
 
     ?>
 
     <div class="yp-tickets__box">
 
       <div class="meta-options yp-tickets__field">
-        <div class="field-row">
+        <div class="field-row col-12 col-md-6">
+          <label class="yp-tickets__label" for="yp_ticket_attachment">
+            <strong>Building</strong><br />
+            <em>Please note that this is <strong>not</strong> editable</em>
+          </label>
+
+          <input type="text" name="ticket_building" disabled value="<?php echo $buildingName; ?>">
+
+        </div><!-- .attachment -->
+
+        <div class="field-row col-12 col-md-6">
           <label class="yp-tickets__label" for="yp_ticket_attachment">
             <strong>Attachment</strong>
           </label>
@@ -116,6 +129,11 @@ class CustomFields {
     if ( isset( $_POST[ 'yp_ticket_attachment_manual_save_flag' ] ) ) {
       \YP\FileUpload::uploadFile( $_FILES, 'yp_ticket_attachment', $postID );
       update_post_meta( $postID, 'yp_ticket_attachment', $_POST[ 'yp_ticket_attachment' ] );
+    }
+
+    // Make sure our flag is in there, otherwise it's an autosave and we should bail.
+    if ( isset( $_POST[ 'yp_ticket_building' ] ) ) {
+      update_post_meta( $postID, 'yp_ticket_building', $_POST[ 'yp_ticket_building' ] );
     }
 
   }

@@ -65,6 +65,8 @@ class Ajax {
     update_post_meta( $postID, 'is_new_ticket', '1' );
     update_post_meta( $postID, 'is_commented_ticket', '0' );
 
+    update_post_meta( $postID, 'yp_ticket_building', $request[ 'ticket_building' ] );
+
     // Tickets::updateUserTicketCount( 'increment', $request[ 'post_author' ], $postID );
     Tickets::updateAdminTicketCount( 'increment', $postID );
 
