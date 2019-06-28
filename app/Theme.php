@@ -21,7 +21,7 @@ class Theme {
 
   public function wp_enqueue_scripts__addStyles() {
 
-    wp_enqueue_style('yp/ticket_system/styles/main', YP_TICKETS_URL . 'dist/styles/main.css', false, null);
+    wp_enqueue_style('yp/ticket_system/styles/main', Utils::getAssetPath( 'styles/main.css' ), false, null);
 
   }
 
@@ -29,7 +29,7 @@ class Theme {
 
     global $wp_query;
 
-    wp_enqueue_script( 'yp/ticket_system/scripts/main', YP_TICKETS_URL . 'dist/scripts/main.js', ['jquery'], null, true );
+    wp_enqueue_script( 'yp/ticket_system/scripts/main', Utils::getAssetPath( 'scripts/main.js' ), ['jquery'], null, true );
 
     $ajaxUrl = admin_url( 'admin-ajax.php' );
 

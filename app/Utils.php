@@ -142,4 +142,90 @@ class Utils {
     return $type[ $idx ];
 
   }
+
+  /**
+   * get the abspath url of the file
+   *
+   * @author Ynah Pantig
+   * @package
+   * @since 1.0
+   * @param $file
+   * @return
+   */
+
+  static public function getAbspathUrl( $file )
+  {
+
+    $server = $_SERVER[ 'HTTP_HOST' ];
+    $dataPath = str_replace( $server, '', $file );
+    $dataPath = str_replace( 'http://', '', $dataPath );
+    $dataPath = str_replace( 'https://', '', $dataPath );
+
+    $file = ABSPATH . $dataPath;
+
+    return $file;
+
+  }/* getAbspathUrl() */
+
+
+  /**
+   * get dist url
+   *
+   * @author Ynah Pantig
+   * @param
+   * @return
+   */
+
+  public static function distUrl(  )
+  {
+
+    return YP_TICKETS_URL . 'dist';
+
+  }
+
+
+  /**
+   * read the assets file
+   *
+   * @author Ynah Pantig
+   * @param
+   * @return
+   */
+
+  public static function readAssets()
+  {
+
+    if ( file_exists( dirname( __DIR__ ) . '/dist/assets.json' ) )
+    {
+      $assets = file_get_contents( trailingslashit( static::distUrl() ) . 'assets.json' );
+      return json_decode( $assets );
+    }
+
+  }
+
+  /**
+   * get assets path
+   *
+   * @author Ynah Pantig
+   * @param $type
+   * @return
+   */
+
+  public static function getAssetPath( $file )
+  {
+
+    $assets = static::readAssets();
+
+    if ( $assets != '' )
+    {
+      foreach ( $assets as $key => $asset ) {
+        if ( strpos( $key, $file ) > -1 ) {
+          return trailingslashit( static::distUrl() ) . $asset;
+        }
+      }
+    } else {
+      return trailingslashit( static::distUrl() ) . $file;
+    }
+
+  }
 }
