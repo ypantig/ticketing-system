@@ -108,8 +108,9 @@ export default {
         // console.log( error );
         $form.find( '.js-yp-ticket-error' ).slideDown();
       },
-      success: () => {
+      success: ( data ) => {
         // console.log( success );
+        console.log( data );
         $form.find( '.js-yp-ticket-form-inner' ).slideUp();
         $form.find( '.js-yp-ticket-success' ).slideDown();
 

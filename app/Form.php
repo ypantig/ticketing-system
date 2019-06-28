@@ -106,7 +106,7 @@ class Form {
 
       $markup .= '<div class="disabled-field">
               <i class="fas fa-pencil-alt banned"></i>';
-      $markup .= '<input disabled type="text" name="ticket_building" class="sr-only pr-0 pl-0 pb-0 pt-0" value="' . $buildings[0] . '" /><input disabled type="text" name="building" value="' . get_the_title( $buildings[0] ) . '" />';
+      $markup .= '<input type="hidden" name="ticket_building" value="' . $buildings[0] . '" /><input disabled type="text" name="building" value="' . get_the_title( $buildings[0] ) . '" />';
       $markup .= '</div>';
 
     }

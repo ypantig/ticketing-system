@@ -61,7 +61,7 @@ class CustomFields {
             <em>Please note that this is <strong>not</strong> editable</em>
           </label>
 
-          <input type="text" name="ticket_building" disabled value="<?php echo $buildingName; ?>">
+          <input type="text" name="yp_ticket_building" disabled value="<?php echo $buildingName; ?>">
 
         </div><!-- .attachment -->
 
