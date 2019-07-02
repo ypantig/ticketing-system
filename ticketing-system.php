@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: YP Support Ticketing System
+ * Plugin Name: Atira Support Ticketing System
  * Description: Support Ticketing System for Atira Property Management Services Strata Sites
  * Version: 1.0
  * Author: Ynah Pantig
