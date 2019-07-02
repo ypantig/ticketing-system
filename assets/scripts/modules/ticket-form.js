@@ -2,6 +2,7 @@ export default {
   init() {
 
     this.triggerSubmit = this.triggerSubmit.bind( this );
+    this.uploadAttachment = this.uploadAttachment.bind( this );
     $( document ).on( 'submit', '.js-yp-ticket-form', this.triggerSubmit );
     $( document ).on( 'click', '.js-file-upload', this.triggerUploadField );
     $( document ).on( 'change', '.js-attachment', this.changeUploadField );
@@ -20,14 +21,14 @@ export default {
         filename = filename.substring(1);
       }
 
-      $( event.currentTarget ).siblings( '.js-file-name' ).html( filename );
+      $( event.currentTarget ).parents( '.js-ticket-upload-field' ).find( '.js-file-name' ).html( filename );
     }
 
   },
 
   triggerUploadField( event ) {
 
-    $( event.currentTarget ).siblings( '.js-attachment' ).click();
+    $( event.currentTarget ).parents( '.js-ticket-upload-field' ).find( '.js-attachment' ).click();
 
   },
 
@@ -45,54 +46,6 @@ export default {
     $form.find( '.js-yp-ticket-error' ).slideUp();
 
     const self = this;
-
-    if ( $form.find( '.js-attachment' ).val() != '' ) {
-
-      const file = $form.find( '.js-attachment' ).prop( 'files' )[0];
-      const formData = new FormData();
-
-      formData.append( 'action', 'upload-attachment' );
-      formData.append( 'async-upload', file );
-      formData.append( 'name', file.name );
-      formData.append( '_wpnonce', window.yp_ticket_global.nonce );
-
-      const submitLabel = $form.find( '.js-submit-ticket' ).val();
-      $form.find( '.js-submit-ticket' ).attr( 'disabled', 'disabled' ).val( 'Submitting Ticket...' );
-
-      $.ajax({
-        url: window.yp_ticket_global.upload_url,
-        type: 'POST',
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        data: formData,
-        error: ( error ) => {
-          $form.find( '.js-yp-upload-error' ).html( error ).show();
-        },
-        success: ( data ) => {
-          if ( !data.success ) {
-
-            $form.find( '.js-yp-upload-error' ).html( data.data.message ).show();
-            $form.find( '.js-submit-ticket' ).removeAttr( 'disabled' ).val( submitLabel );
-
-          } else {
-
-            self.submitTicketEvent( $form, data );
-
-          }
-        },
-      });
-
-    } else {
-
-      self.submitTicketEvent( $form );
-
-    }
-
-  },
-
-  submitTicketEvent( $form, data ) {
-
     const ticketData = this.jsonData( $form );
 
     $.ajax({
@@ -102,22 +55,62 @@ export default {
       data: {
         action: 'submit_ticket_form',
         data: ticketData,
-        attachment: ( data && data.data ) ? data.data : null,
       },
       error: () => {
-        // console.log( error );
         $form.find( '.js-yp-ticket-error' ).slideDown();
       },
       success: ( data ) => {
-        // console.log( success );
-        console.log( data );
-        $form.find( '.js-yp-ticket-form-inner' ).slideUp();
-        $form.find( '.js-yp-ticket-success' ).slideDown();
-
-        $( 'html, body' ).animate({
-          scrollTop: 0,
-        });
+        if ( $form.find( '.js-attachment' ).val() != '' ) {
+          self.uploadAttachment( $form, data.postID );
+        } else {
+          this.toggleFormSuccessMessage( $form );
+        }
       },
+    });
+
+  },
+
+  uploadAttachment( $form, postID ) {
+
+    const files = $form.find( '.js-attachment' )[0].files;
+    const formData = new FormData();
+
+    formData.append( 'action', 'upload_ticket_attachment' );
+    formData.append( 'files[0]', files[0] );
+    formData.append( 'postID', postID );
+
+    const submitLabel = $form.find( '.js-submit-ticket' ).val();
+    $form.find( '.js-submit-ticket' ).attr( 'disabled', 'disabled' ).val( 'Submitting Ticket...' );
+
+    $.ajax({
+      url: window.yp_ticket_global.ajax_url,
+      type: 'POST',
+      contentType: false,
+      processData: false,
+      dataType: 'json',
+      data: formData,
+      error: ( error ) => {
+        $form.find( '.js-yp-upload-error' ).html( error ).show();
+      },
+      success: ( data ) => {
+        if ( !data.success ) {
+          $form.find( '.js-yp-upload-error' ).html( data.message ).show();
+          $form.find( '.js-submit-ticket' ).removeAttr( 'disabled' ).val( submitLabel );
+        } else {
+          this.toggleFormSuccessMessage( $form );
+        }
+      },
+    });
+
+  },
+
+  toggleFormSuccessMessage( $form ) {
+
+    $form.find( '.js-yp-ticket-form-inner' ).slideUp();
+    $form.find( '.js-yp-ticket-success' ).slideDown();
+
+    $( 'html, body' ).animate({
+      scrollTop: 0,
     });
 
   },

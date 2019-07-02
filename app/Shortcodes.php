@@ -110,11 +110,11 @@ class Shortcodes {
 
           <div class="col-12 form-field col-md-6">
             <label for="attachment"><?php echo __( 'Upload file', 'yp-ticketing-system' ); ?></label>
-            <div class="yp-ticket-upload-field">
-              <input type="file" name="async-upload" id="attachment" class="js-attachment sr-only" />
+            <div class="yp-ticket-upload-field js-ticket-upload-field">
+              <input type="file" name="upload_ticket_file" class="js-attachment sr-only" />
               <div class="yp-ticket-upload-error js-yp-upload-error small"></div>
               <button type="button" class="js-file-upload btn btn--secondary">Upload file</button>
-              <span class="js-file-name yp-ticket-upload-filename"></span>
+              <span class="js-file-name small yp-ticket-upload-filename"></span>
             </div>
           </div>
 
@@ -127,6 +127,7 @@ class Shortcodes {
             </div>
 
             <?php wp_nonce_field( 'yp-ticket-system' ); ?>
+
             <input type="submit" class="btn btn--primary js-submit-ticket" value="<?php echo __( 'Submit Ticket' ); ?>" />
           </div>
         </div>

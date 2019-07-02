@@ -26,6 +26,11 @@
   }
 }
 
+.yp-tickets__label {
+  margin-bottom: $spacer / 2;
+  display: block;
+}
+
 .yp-ticket-upload-error,
 .yp-ticket__message {
   display: none;
@@ -40,6 +45,5 @@
   text-overflow: ellipsis;
   width: 50%;
   align-self: center;
-  padding-left: 15px;
   overflow: hidden;
 }

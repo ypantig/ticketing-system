@@ -44,7 +44,7 @@ class CustomFields {
    */
   public function ticketInformation( $post ) {
 
-    $attachmentID = get_post_meta( $post->ID, 'yp_ticket_attachment', true );
+    $attachmentID = (int) get_post_meta( $post->ID, 'yp_ticket_attachment', true );
     $buildingID = get_post_meta( $post->ID, 'yp_ticket_building', true );
     $notify = get_post_meta( $post->ID, 'yp_ticket_notify_author', true );
 
@@ -76,24 +76,22 @@ class CustomFields {
 
               <?php
 
-                $arrAttachmentImg = wp_get_attachment_image_src( $attachmentID, 'medium' );
-                $attachmentImg = $arrAttachmentImg[0];
+                $arrAttachmentImg = wp_get_attachment_image_src( $attachmentID, 'full' );
 
-                if ( !$arrAttachmentImg ) {
-                  $attachmentUrl = wp_get_attachment_url( $attachmentID );
-                  $attachmentImg = includes_url( 'images/media/' . Utils::getFileImage( $attachmentUrl ) . '.png' );
+                if ( $arrAttachmentImg ) {
+                  $attachmentUrl = $arrAttachmentImg[0];
                 }
 
               ?>
 
-              <img src="<?php echo $attachmentImg; ?>" /><br />
-              <small><?php echo $attachmentUrl; ?></small>
+              <a href="<?php echo $attachmentUrl; ?>" target="_blank" title=""><img width="80%" src="<?php echo $attachmentUrl; ?>" /></a><br />
+              <small><?php echo basename( $attachmentUrl ); ?></small>
 
             </div>
 
           <?php endif; ?>
 
-          <input id="yp_ticket_attachment" type="file" name="yp_ticket_attachment" value="<?php echo $attachmentID; ?>" />
+          <input id="yp_ticket_attachment" type="hidden" name="yp_ticket_attachment" value="<?php echo $attachmentID; ?>" />
 
           <?php
             // Put in a hidden flag. This helps differentiate between manual saves and auto-saves (in auto-saves, the file wouldn't be passed).
