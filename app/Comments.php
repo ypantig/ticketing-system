@@ -100,7 +100,7 @@ class Comments {
       'label_submit' => __( 'Submit', 'yp-ticketing-system' ),
       'class_submit' => 'btn btn--primary',
       'title_reply_before' => '<h3 id="reply-title" class="h4 comment-reply-title">',
-      'comment_field' => '<div class="row">' . $form->buildStatusField( $currentStatus ) . '</div><div class="comment-form-comment"><label for="comment">' . _x( 'Notes', 'noun' ) . '</label><textarea id="comment" name="comment" cols="45" rows="4" maxlength="65525" required="required"></textarea></div>',
+      'comment_field' => $form->buildStatusField( $currentStatus ) . '<div class="comment-form-comment mt-3"><label for="comment">' . _x( 'Notes', 'noun' ) . '</label><textarea id="comment" name="comment" cols="45" rows="4" maxlength="65525" required="required"></textarea></div>',
       'logged_in_as' => '',
     ];
 
