@@ -195,9 +195,9 @@ class Utils {
   public static function readAssets()
   {
 
-    if ( file_exists( dirname( __DIR__ ) . '/dist/assets.json' ) )
+    if ( file_exists( YP_TICKETS_PATH . 'dist/assets.json' ) )
     {
-      $assets = file_get_contents( trailingslashit( static::distUrl() ) . 'assets.json' );
+      $assets = file_get_contents( YP_TICKETS_PATH . 'dist/assets.json' );
       return json_decode( $assets );
     }
 
