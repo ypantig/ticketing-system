@@ -6,3 +6,9 @@ Each strata building is part of a multi-site and has their own requests handled 
 A status on the ticket is updated each time a ticket has been newly created, and if a new update has been posted on the ticket. Users can create a conversation around each ticket, utilizing WordPress's comments functionality.
 
 A ticket is only visible to the administrator of the site, as well as the person who had submitted the ticket.
+
+# Screenshots
+
+![Ticket form screen](screenshots/form-screen.png)
+
+![Ticket list screen](screenshots/ticket-list.png)
